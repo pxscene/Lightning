@@ -24,48 +24,19 @@ export default class Tools {
     static createRoundRect(stage, w, h, radius, strokeWidth, strokeColor, fill, fillColor) {
         if (fill === undefined) fill = true;
         if (strokeWidth === undefined) strokeWidth = 0;
+        
+        let scene = stage.platform;
 
-        let canvas = stage.platform.getDrawingCanvas();
-        let ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = true;
-
-        canvas.width = w + strokeWidth + 2;
-        canvas.height = h + strokeWidth + 2;
-
-        ctx.beginPath();
-        let x = 0.5 * strokeWidth + 1, y = 0.5 * strokeWidth + 1;
-
-        ctx.moveTo(x + radius[0], y);
-        ctx.lineTo(x + w - radius[1], y);
-        ctx.arcTo(x + w, y, x + w, y + radius[1], radius[1]);
-        ctx.lineTo(x + w, y + h - radius[2]);
-        ctx.arcTo(x + w, y + h, x + w - radius[2], y + h, radius[2]);
-        ctx.lineTo(x + radius[3], y + h);
-        ctx.arcTo(x, y + h, x, y + h - radius[3], radius[3]);
-        ctx.lineTo(x, y + radius[0]);
-        ctx.arcTo(x, y, x + radius[0], y, radius[0]);
-        ctx.closePath();
-
-        if (fill) {
-            if (Utils.isNumber(fillColor)) {
-                ctx.fillStyle = StageUtils.getRgbaString(fillColor);
-            } else {
-                ctx.fillStyle = "white";
-            }
-            ctx.fill();
-        }
-
-        if (strokeWidth) {
-            if (Utils.isNumber(strokeColor)) {
-                ctx.strokeStyle = StageUtils.getRgbaString(strokeColor);
-            } else {
-                ctx.strokeStyle = "white";
-            }
-            ctx.lineWidth = strokeWidth;
-            ctx.stroke();
-        }
-
-        return canvas;
+        fillColor = fill ? fillColor : "none";
+        var boundW = w;
+        var boundH = h;
+        var data = "data:image/svg,"+'<svg viewBox="0 0 '+boundW+' '+boundH+'" xmlns="http://www.w3.org/2000/svg"><rect width="'+w+'" height="'+h+'" fill="'+fillColor+'" rx="'+radius+'" stroke="'+strokeColor+'" stroke-width="'+strokeWidth+'"/></svg>';
+       
+        var imgRes = scene.create({ t: "imageResource", url: data });
+       
+        var obj = scene.create({ t: "image", resource: imgRes, w:w, h:h, parent: scene});
+    
+        return obj;
     }
 
     static getShadowRect(w, h, radius = 0, blur = 5, margin = blur * 2) {
@@ -82,41 +53,30 @@ export default class Tools {
     }
 
     static createShadowRect(stage, w, h, radius, blur, margin) {
-        let canvas = stage.platform.getDrawingCanvas();
-        let ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = true;
-
-        canvas.width = w + margin * 2;
-        canvas.height = h + margin * 2;
-
-        // WpeWebKit bug: we experienced problems without this with shadows in noncompositedwebgl mode.
-        ctx.globalAlpha = 0.01;
-        ctx.fillRect(0, 0, 0.01, 0.01);
-        ctx.globalAlpha = 1.0;
-
-        ctx.shadowColor = StageUtils.getRgbaString(0xFFFFFFFF);
-        ctx.fillStyle = StageUtils.getRgbaString(0xFFFFFFFF);
-        ctx.shadowBlur = blur;
-        ctx.shadowOffsetX = (w + 10) + margin;
-        ctx.shadowOffsetY = margin;
-
-        ctx.beginPath();
-        const x = -(w + 10);
-        const y = 0;
-
-        ctx.moveTo(x + radius[0], y);
-        ctx.lineTo(x + w - radius[1], y);
-        ctx.arcTo(x + w, y, x + w, y + radius[1], radius[1]);
-        ctx.lineTo(x + w, y + h - radius[2]);
-        ctx.arcTo(x + w, y + h, x + w - radius[2], y + h, radius[2]);
-        ctx.lineTo(x + radius[3], y + h);
-        ctx.arcTo(x, y + h, x, y + h - radius[3], radius[3]);
-        ctx.lineTo(x, y + radius[0]);
-        ctx.arcTo(x, y, x + radius[0], y, radius[0]);
-        ctx.closePath();
-        ctx.fill();
-
-        return canvas;
+        let scene = stage.platform;
+        var boundW = w + margin * 2;
+        var boundH = h + margin * 2;
+        var data = "data:image/svg,"+
+              '<svg viewBox="0 0 '+boundW+' '+boundH+'" xmlns="http://www.w3.org/2000/svg" version="1.1"> \
+                    <linearGradient id="rectGradient" gradientUnits="userSpaceOnUse" x1="0%" y1="180%" x2="100%" y2="-60%" gradientTransform="rotate(0)"> \
+                    <stop offset="20%" stop-color="#00FF00" stop-opacity="0.5"/> \
+                    <stop offset="50%" stop-color="#0000FF" stop-opacity=".8"/> \
+                    <stop offset="80%" stop-color="#00FF00" stop-opacity=".5"/> \
+                    </linearGradient> \
+                    <filter id="rectBlur" x="0" y="0"> \
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="'+blur+'" /> \
+                    </filter> \
+                </defs> \
+                <g enable-background="new" > \
+                    <rect x="0" y="0" width="'+boundW+'" height="'+boundH+'" fill="url(#rectGradient)"  rx="'+radius+'" stroke-width="'+margin+'" filter="url(#rectBlur)"/> \
+                </g> \
+                </svg>';
+       
+        var imgRes = scene.create({ t: "imageResource", url: data });
+       
+        var obj = scene.create({ t: "image", resource: imgRes, w:boundW, h:boundH, parent: scene});
+    
+        return obj;
     }
 
     static getSvgTexture(url, w, h) {
@@ -128,21 +88,14 @@ export default class Tools {
     }
 
     static createSvg(cb, stage, url, w, h) {
-        let canvas = stage.platform.getDrawingCanvas();
-        let ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = true;
-
-        let img = new Image();
-        img.onload = () => {
-            canvas.width = w;
-            canvas.height = h;
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            cb(null, canvas);
-        }
-        img.onError = (err) => {
+        let scene = stage.platform;
+        let img = scene.create({ t: "image", url: url, w:w, h:h, parent: scene, stretchX: 1, stretchY: 1 });
+        img.ready.then(function () {
+            cb(null, img);
+        },
+		function(err){ // reject
             cb(err);
-        }
-        img.src = url;
+		});
     }
 
 }
