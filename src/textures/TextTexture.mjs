@@ -563,4 +563,3 @@ proto._cutSy = 0;
 proto._cutEy = 0;
 
 import TextTextureRenderer from "./TextTextureRenderer.mjs";
-import TextTextureRendererSpark from "../platforms/spark/TextTextureRendererSpark.mjs";
