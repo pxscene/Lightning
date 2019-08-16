@@ -35,7 +35,7 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         this._quadsBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._quadsBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, allIndices, gl.STATIC_DRAW);
-
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
         // The matrix that causes the [0,0 - W,H] box to map to [-1,-1 - 1,1] in the end results.
         this._projection = new Float32Array([2/this.ctx.stage.coordsWidth, -2/this.ctx.stage.coordsHeight]);
 
@@ -61,10 +61,10 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
 
     _setupBuffers() {
         let gl = this.gl;
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._quadsBuffer);
         let element = new Float32Array(this.renderState.quads.data, 0, this.renderState.quads.dataLength);
         gl.bindBuffer(gl.ARRAY_BUFFER, this._attribsBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, element, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
     }
 
     _setupQuadOperation(quadOperation) {
@@ -76,9 +76,11 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
         let shader = op.shader;
 
         if (op.length || op.shader.addEmpty()) {
+            this._bindBuffersAndAttrs();
             shader.beforeDraw(op);
             shader.draw(op);
             shader.afterDraw(op);
+            this._unbindBuffersAndAttrs();
         }
     }
 
@@ -103,6 +105,18 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
             this._currentShaderProgram.stopProgram();
             this._currentShaderProgram = null;
         }
+    }
+
+    _bindBuffersAndAttrs() {
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this._attribsBuffer);
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this._quadsBuffer);
+        this._currentShaderProgram.enableAttribs();
+    }
+
+    _unbindBuffersAndAttrs() {
+        this._currentShaderProgram.disableAttribs();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null);
     }
 
     _bindRenderTexture(renderTexture) {
