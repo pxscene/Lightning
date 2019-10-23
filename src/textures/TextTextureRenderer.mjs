@@ -70,5 +70,22 @@ export default class TextTextureRenderer {
             });
         }
     }
+
+    drawText(x, y) {
+        console.log("renderer.drawText");
+        // We do not use a promise so that loading is performed syncronous when possible.
+        const loadPromise = this._load();
+        if (!loadPromise) {
+            return this._stage.platform.drawText(this).then(() => {
+                this._canvas.internal.drawText(x, y);
+            });
+        } else {
+            return loadPromise.then(() => {
+                return this._stage.platform.drawText(this).then(() => {
+                    this._canvas.internal.drawText(this, x, y);
+                    });
+            });
+        }
+    }
 }
 
