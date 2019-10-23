@@ -627,6 +627,15 @@ export default class Element {
         this._updateDimensions();
     };
 
+    onDimensionsChanged(w, h) {
+        if (this.texture instanceof TextTexture) {
+            this.texture.w = w;
+            this.texture.h = h;
+            this.w = w;
+            this.h = h;
+        }
+    }
+
     _updateDimensions() {
         let w = this._getRenderWidth();
         let h = this._getRenderHeight();
@@ -690,6 +699,11 @@ export default class Element {
                 ty2 = Math.min(1, ty2);
             }
 
+            if (displayedTextureSource._flipTextureY) {
+                let tempty = ty2;
+                ty2 = ty1;
+                ty1 = tempty;
+            }
             this.__core.setTextureCoords(tx1, ty1, tx2, ty2);
         }
     }
