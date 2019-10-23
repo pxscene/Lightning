@@ -429,7 +429,7 @@ export default class TextTexture extends Texture {
         return function(cb) {
             const canvas = this.stage.platform.getDrawingCanvas();
             const renderer = new TextTextureRenderer(this.stage, canvas, args);
-            let p = renderer.drawText(this.x, this.y);
+            let p = (Utils$1.isWeb) ? renderer.draw() : renderer.drawText(this.x, this.y);
 
             if (p) {
                 p.then(() => {
