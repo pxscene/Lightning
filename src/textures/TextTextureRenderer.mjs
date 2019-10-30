@@ -65,7 +65,7 @@ export default class TextTextureRenderer {
         if (!loadPromise) {
             if (Utils.isSpark) {
                 return this._stage.platform.drawText(this).then(() => {
-                    this._canvas.internal.drawText(this.x, this.y);
+                    this._canvas.internal.paint(this.x, this.y);
                 });
             }
             else
@@ -74,7 +74,7 @@ export default class TextTextureRenderer {
             return loadPromise.then(() => {
                 if (Utils.isSpark) {
                     return this._stage.platform.drawText(this).then(() => {
-                        this._canvas.internal.drawText(this.x, this.y);
+                        this._canvas.internal.paint(this.x, this.y);
                     });
                 }
                 else
