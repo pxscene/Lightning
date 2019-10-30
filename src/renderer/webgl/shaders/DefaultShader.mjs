@@ -45,20 +45,26 @@ export default class DefaultShader extends WebGLShader {
 
         if (length) {
             let glTexture = operation.getTexture(0);
-            let pos = 0;
-            for (let i = 0; i < length; i++) {
-                let tx = operation.getTexture(i);
-                if (glTexture !== tx) {
-                    gl.bindTexture(gl.TEXTURE_2D, glTexture);
-                    gl.drawElements(gl.TRIANGLES, 6 * (i - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
-                    glTexture = tx;
-                    pos = i;
+            if (glTexture.options)
+            {
+               glTexture.options.imageRef.paint(this.ctx.stage.renderer._canvas.x, this.ctx.stage.renderer._canvas.y);
+            }
+            else {
+                let pos = 0;
+                for (let i = 0; i < length; i++) {
+                    let tx = operation.getTexture(i);
+                    if (glTexture !== tx) {
+                        gl.bindTexture(gl.TEXTURE_2D, glTexture);
+                        gl.drawElements(gl.TRIANGLES, 6 * (i - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
+                        glTexture = tx;
+                        pos = i;
+                    }
                 }
-            }
-            if (pos < length) {
-                gl.bindTexture(gl.TEXTURE_2D, glTexture);
-                gl.drawElements(gl.TRIANGLES, 6 * (length - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
-            }
+                if (pos < length) {
+                    gl.bindTexture(gl.TEXTURE_2D, glTexture);
+                    gl.drawElements(gl.TRIANGLES, 6 * (length - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
+                }
+            }   
         }
     }
 
