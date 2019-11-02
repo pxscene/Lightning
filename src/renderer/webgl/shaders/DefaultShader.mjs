@@ -45,9 +45,11 @@ export default class DefaultShader extends WebGLShader {
 
         if (length) {
             let glTexture = operation.getTexture(0);
-            if (glTexture.options)
+            
+            if (glTexture.options != undefined)
             {
-               glTexture.options.imageRef.paint(this.ctx.stage.renderer._canvas.x, this.ctx.stage.renderer._canvas.y);
+               const vc = operation.getElementCore(0);
+               glTexture.options.imageRef.paint(vc.x, vc.y);
             }
             else {
                 let pos = 0;
