@@ -1756,12 +1756,6 @@ export default class ElementCore {
                 renderState.setScissor(this._scissor);
                 this.renderState.addQuad(this);
             }
-            else if ((this._outOfBounds === 0) && this._element && this._element.stage && this._element.stage.platform && this._element.stage.platform._sparkCanvas && this._element.stage.platform._sparkCanvas.internal) {
-                this._element.stage.platform._sparkCanvas.x = this.x;
-                this._element.stage.platform._sparkCanvas.y = this.y;
-                this.ctx.stage.platform._sparkCanvas.x = this.x;
-                this.ctx.stage.platform._sparkCanvas.y = this.y;
-                }
                 
             // Also add children to the VBO.
             if (this._children) {
