@@ -119,9 +119,10 @@ export default class WebGLCoreRenderExecutor extends CoreRenderExecutor {
     }
 
     _clearRenderTexture() {
-        if (this.ctx.stage.platform._sparkCanvas)
-            return;
-        
+        if (Utils.isSpark) {
+            if (this.ctx.stage.platform._sparkCanvas)
+                return;
+        }
         super._clearRenderTexture();
         let gl = this.gl;
         if (!this._renderTexture) {
