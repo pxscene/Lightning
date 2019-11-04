@@ -40,6 +40,7 @@ export default class DefaultShader extends WebGLShader {
 
     draw(operation) {
         let gl = this.gl;
+        
         if (Utils.isSpark) {
             let glTexture = operation.getTexture(0);
             if (glTexture.options != undefined)
