@@ -40,33 +40,32 @@ export default class DefaultShader extends WebGLShader {
 
     draw(operation) {
         let gl = this.gl;
-
+        if (Utils.isSpark) {
+            let glTexture = operation.getTexture(0);
+            if (glTexture.options != undefined)
+                {
+                const vc = operation.getElementCore(0);
+                glTexture.options.imageRef.paint(vc.x, vc.y);
+                }
+        }
         let length = operation.length;
 
         if (length) {
             let glTexture = operation.getTexture(0);
-            
-            if (glTexture.options != undefined)
-            {
-               const vc = operation.getElementCore(0);
-               glTexture.options.imageRef.paint(vc.x, vc.y);
-            }
-            else {
-                let pos = 0;
-                for (let i = 0; i < length; i++) {
-                    let tx = operation.getTexture(i);
-                    if (glTexture !== tx) {
-                        gl.bindTexture(gl.TEXTURE_2D, glTexture);
-                        gl.drawElements(gl.TRIANGLES, 6 * (i - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
-                        glTexture = tx;
-                        pos = i;
-                    }
-                }
-                if (pos < length) {
+            let pos = 0;
+            for (let i = 0; i < length; i++) {
+                let tx = operation.getTexture(i);
+                if (glTexture !== tx) {
                     gl.bindTexture(gl.TEXTURE_2D, glTexture);
-                    gl.drawElements(gl.TRIANGLES, 6 * (length - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
+                    gl.drawElements(gl.TRIANGLES, 6 * (i - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
+                    glTexture = tx;
+                    pos = i;
                 }
-            }   
+            }
+            if (pos < length) {
+                gl.bindTexture(gl.TEXTURE_2D, glTexture);
+                gl.drawElements(gl.TRIANGLES, 6 * (length - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
+            }
         }
     }
 
