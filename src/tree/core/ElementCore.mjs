@@ -1756,7 +1756,7 @@ export default class ElementCore {
                 renderState.setScissor(this._scissor);
                 this.renderState.addQuad(this);
             }
-               
+
             // Also add children to the VBO.
             if (this._children) {
                 if (this._zContextUsage) {
