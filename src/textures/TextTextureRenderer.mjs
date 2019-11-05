@@ -63,14 +63,10 @@ export default class TextTextureRenderer {
         // We do not use a promise so that loading is performed syncronous when possible.
         const loadPromise = this._load();
         if (!loadPromise) {
-            if (Utils.isSpark) return this._stage.platform.drawText(this);
-            else
-                return this._draw();
+            return Utils.isSpark ? this._stage.platform.drawText(this) : this._draw();
         } else {
             return loadPromise.then(() => {
-                if (Utils.isSpark) return this._stage.platform.drawText(this);
-                else
-                    return this._draw();
+                return Utils.isSpark ? this._stage.platform.drawText(this) : this._draw();
             });
         }
     }
