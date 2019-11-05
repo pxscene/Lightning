@@ -40,13 +40,35 @@ export default class DefaultShader extends WebGLShader {
 
     draw(operation) {
         let gl = this.gl;
-        if (Utils.isSpark) {
-            let glTexture = operation.getTexture(0);
-            if (glTexture.options != undefined)
-                {
-                const vc = operation.getElementCore(0);
-                glTexture.options.imageRef.paint(vc.x, vc.y);
+        if (Utils.isSpark) { 
+            let pos = 0;
+            for (let i = 0; i < length; i++) {
+                let tx = operation.getTexture(i);
+                let tvc = operation.getElementCore(i);
+                if (glTexture !== tx) {
+                    if (glTexture.options && glTexture.options.imageRef)
+                        {
+                        glTexture.options.imageRef.paint(vc.x, vc.y);
+                        }
+                    else {
+                        gl.bindTexture(gl.TEXTURE_2D, glTexture);
+                        gl.drawElements(gl.TRIANGLES, 6 * (i - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
+                        }
+                    glTexture = tx;
+                    vc = tvc;
+                    pos = i;
                 }
+            }
+            if (pos < length) {
+                if (glTexture.options && glTexture.options.imageRef)
+                    {
+                    glTexture.options.imageRef.paint(vc.x, vc.y);
+                    }
+                else {
+                    gl.bindTexture(gl.TEXTURE_2D, glTexture);
+                    gl.drawElements(gl.TRIANGLES, 6 * (length - pos), gl.UNSIGNED_SHORT, (pos + operation.index) * 6 * 2);
+                }
+            }
         }
         let length = operation.length;
 
