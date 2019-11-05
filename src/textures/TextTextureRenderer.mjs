@@ -64,18 +64,14 @@ export default class TextTextureRenderer {
         const loadPromise = this._load();
         if (!loadPromise) {
             if (Utils.isSpark) {
-                return this._stage.platform.drawText(this).then(() => {
-                    this._canvas.internal.paint(this.x, this.y);
-                });
+                return this._stage.platform.drawText(this);
             }
             else
                 return this._draw();
         } else {
             return loadPromise.then(() => {
                 if (Utils.isSpark) {
-                    return this._stage.platform.drawText(this).then(() => {
-                        this._canvas.internal.paint(this.x, this.y);
-                    });
+                    return this._stage.platform.drawText(this);
                 }
                 else
                     return this._draw();
