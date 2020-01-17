@@ -1532,6 +1532,10 @@ export default class Element {
             this.colorBl = v;
             this.colorBr = v;
         }
+        if (Utils.isSpark && (this.texture && (this.texture instanceof TextTexture)))
+        {
+          this.texture.textColor = this.color;
+        }
     }
 
     get colorTop() {
@@ -1706,6 +1710,10 @@ export default class Element {
                 // This allows userland to set dimensions of the Element and then later specify the text.
                 this.texture.w = this.w;
                 this.texture.h = this.h;
+            }
+            if (Utils.isSpark && this.color)
+            {
+              this.texture.textColor = this.color;
             }
         }
         return this.texture;
