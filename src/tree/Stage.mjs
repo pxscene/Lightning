@@ -8,7 +8,6 @@ import Utils from "./Utils.mjs";
 import WebGLRenderer from "../renderer/webgl/WebGLRenderer.mjs";
 import C2dRenderer from "../renderer/c2d/C2dRenderer.mjs";
 import SparkRenderer from "../renderer/spark/SparkRenderer.mjs";
-import PlatformLoader from "../platforms/PlatformLoader.mjs";
 import WebGLStateManager from "../tools/WebGLStateManager.mjs";
 import Shader from "./Shader.mjs";
 
