@@ -1,6 +1,6 @@
 import WebGLShader from "../../webgl/WebGLShader.mjs";
 
-export default class DefaultShader extends WebGLShader {
+export default class SparkShader extends WebGLShader {
 
     enableAttribs() {
         // Enables the attribs in the shader program.
