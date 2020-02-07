@@ -77,7 +77,7 @@ export default class SparkShader extends WebGLShader {
 
 }
 
-DefaultShader.vertexShaderSource = `
+SparkShader.vertexShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
@@ -95,7 +95,7 @@ DefaultShader.vertexShaderSource = `
     }
 `;
 
-DefaultShader.fragmentShaderSource = `
+SparkShader.fragmentShaderSource = `
     #ifdef GL_ES
     precision lowp float;
     #endif
